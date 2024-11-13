@@ -16,7 +16,6 @@ namespace Projektmunka_24_I
         {
             InitializeComponent();
             InitializeTabcontrol();
-
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -25,6 +24,7 @@ namespace Projektmunka_24_I
             MaximizeBox = false;
             MinimizeBox = false;
             this.ClientSize = new Size(500, 500);
+            Text = "Projektmunka";
         }
 
         public void InitializeTabcontrol()
@@ -42,12 +42,10 @@ namespace Projektmunka_24_I
             TabPage tabPage1 = new TabPage()
             {
                 Text = "Fejben 21",
-                BackColor = Color.Red,
             };
             TabPage tabPage2 = new TabPage()
             {
                 Text = "Tic-Tac-Toe",
-                BackColor = Color.Green,
 
             };
             TabPage tabPage3 = new TabPage()
@@ -63,14 +61,11 @@ namespace Projektmunka_24_I
             Controls.Add(tabControl1);
 
             Fejben21(tabPage1);
+            TicTacToe(tabPage2);
         }
 
         public void Fejben21(TabPage tabPage1)
         {
-            tabPage1.BackColor = Color.FromArgb(128, 220, 204, 182);
-            tabPage1.ForeColor = Color.Black;
-
-
             // Setup initial label and input controls
             Label KezdoFelirat = new Label
             {
@@ -164,6 +159,167 @@ namespace Projektmunka_24_I
                 Parent = tabPage1,
                 BackColor = Color.Transparent
             };
+        }
+
+
+        private Button[,] buttons = new Button[3, 3];
+        private char[,] board = new char[3, 3];
+        private char currentPlayer = 'X';
+        private bool gameEnded = false;
+        public void TicTacToe(TabPage tabPage2)
+        {
+            int buttonSize = (this.Width - 100) / 3;
+
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    buttons[i, j] = new Button
+                    {
+                        Parent = tabPage2,
+                        Size = new Size(buttonSize, buttonSize),
+                        Location = new Point(j * buttonSize + 10, i * buttonSize + 10),
+                        Font = new Font("Arial", 16, FontStyle.Bold),
+                        Tag = new Point(i, j), // A gomb pozíciója a mátrixban
+                        BackColor = Color.LightBlue,
+                    };
+
+                    buttons[i, j].Click += ButtonClick;
+                    //Controls.Add(buttons[i, j]);
+                }
+            }
+
+            // Hozzáadunk egy státusz Labelt az ablak aljára
+            Label labelStatus = new Label
+            {
+                Parent = tabPage2,
+                Location = new Point(0, 400),
+                Size = new Size(250, 50),
+                Font = new Font("Arial", 10),
+                TextAlign = ContentAlignment.MiddleCenter,
+                Name = "labelStatus",
+                Text = "Játék kezdődött! 'X' kezd.",
+            };
+            Controls.Add(labelStatus);
+
+            Button resetButton = new Button
+            {
+                Parent = tabPage2,
+                Location = new Point(260, 450),
+                Size = new Size(75, 50),
+                Font = new Font("Arial", 14),
+                TextAlign = ContentAlignment.MiddleCenter,
+                Text = "Reset",
+            };
+            resetButton.Click += ResetGame;
+
+            void ResetGame(object sender, EventArgs e)
+            {
+                currentPlayer = 'X';
+                gameEnded = false;
+                Controls["labelStatus"].Text = "reset";
+
+                // Inicializáljuk a táblát és a gombok szövegét
+                for (int i = 0; i < 3; i++)
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+                        board[i, j] = '\0';
+                        buttons[i, j].Text = "";
+                        buttons[i, j].Enabled = true;
+                    }
+                }
+            }
+
+            void ButtonClick(object sender, EventArgs e)
+            {
+                if (gameEnded) return;
+
+                Button button = (Button)sender;
+                Point pos = (Point)button.Tag;
+                int row = pos.X;
+                int col = pos.Y;
+
+                if (board[row, col] == '\0')
+                {
+                    board[row, col] = currentPlayer;
+                    button.Text = currentPlayer.ToString();
+
+                    if (CheckWin(currentPlayer))
+                    {
+                        Controls["labelStatus"].Text = $"'{currentPlayer}' nyert!";
+                        gameEnded = true;
+                        return;
+                    }
+                    else if (IsBoardFull())
+                    {
+                        Controls["labelStatus"].Text = "Döntetlen!";
+                        gameEnded = true;
+                        return;
+                    }
+
+                    currentPlayer = currentPlayer == 'X' ? 'O' : 'X';
+
+                    if (currentPlayer == 'O')
+                    {
+                        ComputerMove();
+                    }
+                }
+            }
+
+            bool CheckWin(char player)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    if ((board[i, 0] == player && board[i, 1] == player && board[i, 2] == player) ||
+                        (board[0, i] == player && board[1, i] == player && board[2, i] == player))
+                        return true;
+                }
+
+                return (board[0, 0] == player && board[1, 1] == player && board[2, 2] == player) ||
+                       (board[0, 2] == player && board[1, 1] == player && board[2, 0] == player);
+            }
+
+            bool IsBoardFull()
+            {
+                foreach (char c in board)
+                    if (c == '\0') return false;
+                return true;
+            }
+
+            void ComputerMove()
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+                        if (board[i, j] == '\0')
+                        {
+                            board[i, j] = 'O';
+                            buttons[i, j].Text = "O";
+                            buttons[i, j].Enabled = false;
+
+                            if (CheckWin('O'))
+                            {
+                                Controls["labelStatus"].Text = "'O' nyert!";
+                                gameEnded = true;
+                            }
+                            else if (IsBoardFull())
+                            {
+                                Controls["labelStatus"].Text = "Döntetlen!";
+                                gameEnded = true;
+                            }
+                            currentPlayer = 'X';
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        public void Nim(TabPage tabPage3)
+        {
+
         }
     }
 }
