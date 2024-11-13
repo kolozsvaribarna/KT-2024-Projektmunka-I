@@ -64,102 +64,177 @@ namespace Projektmunka_24_I
             TicTacToe(tabPage2);
         }
 
+        static Random R = new Random();
+
         public void Fejben21(TabPage tabPage1)
         {
-            // Setup initial label and input controls
-            Label KezdoFelirat = new Label
-            {
-                Location = new Point(20, 20),
-                Text = "Állítsd be a max lépésmaximumot!",
-                TextAlign = ContentAlignment.MiddleCenter,
-                Size = new Size(300, 25),
+            Label KezdoFelirat, HolTartunk;
+            NumericUpDown MaxSzam, JatekosLepese;
+            Button InditoGomb, MehetGomb;
+            TrackBar FolyamatJelzo;
+            int Osszeg = 0;
+            List<int> Hatarok = new List<int>();
+            Panel panel1;
+
+            tabPage1.BackColor = Color.FromArgb(86, 129, 163);
+            panel1 = new Panel() {
+                Dock = DockStyle.Top,
+                BackColor = Color.FromArgb(68, 255, 242),
+                Height = 100,
                 Parent = tabPage1,
-                BackColor = Color.Transparent
             };
 
-            NumericUpDown MaxSzam = new NumericUpDown()
-            {
-                Location = new Point(320, 20),
-                Size = new Size(40, 25),
+            KezdoFelirat = new Label() {
+                Parent = panel1,
+                Location = new Point(55, 0),
+                Font = new Font("Playfair Display", 16f),
+                Size = new Size(400, 100),
+                Text = "Állítsd be a lépésmaximumot",
+                TextAlign = ContentAlignment.TopCenter,
+                Padding = new Padding(0, 30, 0, 0),
+            };
+
+            MaxSzam = new NumericUpDown() {
+                Parent = tabPage1,
+                Location = new Point(115, 225),
                 Minimum = 2,
                 Maximum = 7,
-                Parent = tabPage1
+                Size = new Size(70, 100),
+                BackColor = Color.FromArgb(2, 143, 232)
+
             };
 
-            Button InditoGomb = new Button()
-            {
-                Location = new Point(380, 20),
-                Size = new Size(75, 25),
+            InditoGomb = new Button() {
+                Parent = tabPage1,
+                Location = new Point(260, 213),
+                Size = new Size(130, 50),
                 Text = "Indítás",
-                BackColor = Color.FromArgb(167, 148, 125),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Parent = tabPage1,
+                Font = new Font("Playfair Display", 14f),
+                BackColor = Color.FromArgb(0, 30, 142),
+                ForeColor = Color.FromArgb(242, 242, 242),
             };
+            InditoGomb.Click += InditoGomb_Click;
 
-            InditoGomb.FlatAppearance.BorderSize = 0;
-            //InditoGomb.Click += InditoGomb_Click;
 
-            // Setup game controls
-            TrackBar FolyamatJelzo = new TrackBar()
-            {
-                Location = new Point(20, 95),
-                Size = new Size(300, 25),
-                Minimum = 0,
-                Maximum = 21,
-                Visible = false,
-                Enabled = false,
-                Parent = tabPage1
-            };
+            #region Fejben21 fuggvenyek
+            void InditoGomb_Click(object sender, EventArgs e) {
 
-            NumericUpDown JatekosLepese = new NumericUpDown()
-            {
-                Location = new Point(330, 95),
-                Size = new Size(40, 25),
-                Minimum = 1,
-                Visible = false,
-                Parent = tabPage1
-            };
+                KezdoFelirat.Visible = false;
+                MaxSzam.Visible = false;
+                InditoGomb.Visible = false;
+                panel1.Visible = false;
 
-            Button MehetGomb = new Button()
-            {
-                Location = new Point(400, 95),
-                Size = new Size(75, 25),
-                Text = "Mehet!",
-                BackColor = Color.FromArgb(167, 148, 125),
-                FlatStyle = FlatStyle.Flat,
-                ForeColor = Color.White,
-                Visible = false,
-                Parent = tabPage1
-            };
 
-            MehetGomb.FlatAppearance.BorderSize = 0;
-            //MehetGomb.Click += MehetGomb_Click;
+                HolTartunk = new Label() {
+                    Parent = tabPage1,
+                    Location = new Point(20, 70),
+                    Size = new Size(450, 75),
+                    Text = "Játék állása:\n",
+                    BackColor = Color.FromArgb(127, 239, 232),
+                };
+                FolyamatJelzo = new TrackBar() {
+                    Parent = tabPage1,
+                    Location = new Point(20, 145),
+                    Size = new Size(450, 25),
+                    Minimum = 0,
+                    Maximum = 21,
+                    Enabled = false,
+                    BackColor = Color.Black,
+                    ForeColor = Color.FromArgb(0, 30, 142),
 
-            Button VisszaGomb = new Button()
-            {
-                Location = new Point(400, 20),
-                Size = new Size(75, 25),
-                Text = "Menü",
-                BackColor = Color.FromArgb(167, 148, 125),
-                FlatStyle = FlatStyle.Flat,
-                ForeColor = Color.White,
-                Visible = false,
-                Parent = tabPage1
-            };
+                };
 
-            VisszaGomb.FlatAppearance.BorderSize = 0;
-            //VisszaGomb.Click += VisszaGomb_Click;
+                JatekosLepese = new NumericUpDown() {
+                    Parent = tabPage1,
+                    Location = new Point(115, 265),
+                    Size = new Size(50, 50),
+                    BackColor = Color.FromArgb(2, 143, 232),
+                    Minimum = 1,
+                    Maximum = (int)MaxSzam.Value < 2 ? 2 : (int)MaxSzam.Value > 7 ? 7 : (int)MaxSzam.Value,
+                };
 
-            Label HolTartunk = new Label
-            {
-                Location = new Point(20, 20),
-                Size = new Size(560, 75),
-                Text = "A játék állása:\n",
-                Parent = tabPage1,
-                BackColor = Color.Transparent
-            };
+                MehetGomb = new Button() {
+                    Parent = tabPage1,
+                    Location = new Point(260, 254),
+                    Text = "Mehet!",
+                    Font = new Font("Playfair Display", 14f),
+
+                    Size = new Size(110, 45),
+                    BackColor = Color.FromArgb(0, 30, 142),
+                    ForeColor = Color.FromArgb(242, 242, 242),
+                };
+
+                MehetGomb.Click += MehetGomb_Click;
+
+                int NagyLepes = (int)MaxSzam.Value > 7 ? 7 :
+                (int)MaxSzam.Value < 2 ? 2 : (int)MaxSzam.Value;
+                for(int i = 21 % (++NagyLepes); i <= 21; i += NagyLepes) {
+                    Hatarok.Add(i);
+                }
+            }
+
+            void MehetGomb_Click(object sender, EventArgs e) {
+                JatekosKovetkezik();
+                GepKovetkezik();
+            }
+
+            void JatekosKovetkezik() {
+                if(!Kiertekeles()) {
+                    /*int AktualisLepes = (int)JatekosLepese.Value < 1 ? 1 :
+                        (int)JatekosLepese.Value > (int)JatekosLepese.Maximum ?
+                        (int)JatekosLepese.Maximum : (int)JatekosLepese.Value;*/
+                    int AktualisLepes = 1;
+                    if((int)JatekosLepese.Value < 1) AktualisLepes = 1;
+                    else if((int)JatekosLepese.Value > (int)JatekosLepese.Maximum)
+                        AktualisLepes = (int)JatekosLepese.Maximum;
+                    else AktualisLepes = (int)JatekosLepese.Value;
+                    //besokallt-e?
+                    if(AktualisLepes + Osszeg > 21) {
+                        MessageBox.Show("Besokalltál! Túllépted a 21-et! (" + (AktualisLepes + Osszeg + ")"));
+                        Application.Restart();
+                    } else {
+                        Osszeg += AktualisLepes;
+                        HolTartunk.Text += " " + Osszeg;
+                        FolyamatJelzo.Value = Osszeg;
+                    }
+                }
+                /*else
+                {
+                    HolTartunk.Text += " " + Osszeg;
+                    MessageBox.Show("Vesztettél!");
+                    Application.Restart();
+                }*/
+            }
+
+            void GepKovetkezik() {
+                if(!Kiertekeles()) {
+                    int i = 0;
+                    for(i = 0; i < Hatarok.Count; i++) {
+                        if(Osszeg < Hatarok[i]) break;
+                    }
+                    if(Hatarok[i] - Osszeg >= 1 && Hatarok[i] - Osszeg <= (int)MaxSzam.Value) {
+                        Osszeg = Hatarok[i];
+                    } else Osszeg += R.Next(1, (int)MaxSzam.Value + 1);
+                    HolTartunk.Text += " " + Osszeg;
+                    FolyamatJelzo.Value = Osszeg;
+                    if(Osszeg == 21) {
+                        MessageBox.Show("Megvertelek!");
+                        Application.Restart();
+                    }
+                } else {
+                    MessageBox.Show("Nyertél, gratulálunk!");
+                    Application.Restart();
+                }
+            }
+
+            bool Kiertekeles() {
+                if(Osszeg < 21) return false;
+                return true;
+            }
+            #endregion
+
         }
+
 
 
         private Button[,] buttons = new Button[3, 3];
