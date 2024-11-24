@@ -7,3 +7,12 @@ C:\Users\koloz\Documents\Files\Iskola\2024-25\c#\_Projekt\Projektmunka_24_I\obj\
 C:\Users\koloz\Documents\Files\Iskola\2024-25\c#\_Projekt\Projektmunka_24_I\obj\Debug\Projektmunka_24_I.csproj.CoreCompileInputs.cache
 C:\Users\koloz\Documents\Files\Iskola\2024-25\c#\_Projekt\Projektmunka_24_I\obj\Debug\Projektmunka_24_I.exe
 C:\Users\koloz\Documents\Files\Iskola\2024-25\c#\_Projekt\Projektmunka_24_I\obj\Debug\Projektmunka_24_I.pdb
+C:\clone\Projektmunka_24_I\bin\Debug\Projektmunka_24_I.exe.config
+C:\clone\Projektmunka_24_I\bin\Debug\Projektmunka_24_I.exe
+C:\clone\Projektmunka_24_I\bin\Debug\Projektmunka_24_I.pdb
+C:\clone\Projektmunka_24_I\obj\Debug\Projektmunka_24_I.csproj.AssemblyReference.cache
+C:\clone\Projektmunka_24_I\obj\Debug\Projektmunka_24_I.Properties.Resources.resources
+C:\clone\Projektmunka_24_I\obj\Debug\Projektmunka_24_I.csproj.GenerateResource.cache
+C:\clone\Projektmunka_24_I\obj\Debug\Projektmunka_24_I.csproj.CoreCompileInputs.cache
+C:\clone\Projektmunka_24_I\obj\Debug\Projektmunka_24_I.exe
+C:\clone\Projektmunka_24_I\obj\Debug\Projektmunka_24_I.pdb

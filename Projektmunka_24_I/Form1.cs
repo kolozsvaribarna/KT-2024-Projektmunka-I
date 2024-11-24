@@ -68,8 +68,8 @@ namespace Projektmunka_24_I
 
         public void Fejben21(TabPage tabPage1)
         {
-            Label KezdoFelirat, HolTartunk;
-            NumericUpDown MaxSzam, JatekosLepese;
+            Label KezdoFelirat, HolTartunk, allas;
+            NumericUpDown_style MaxSzam, JatekosLepese;
             Button InditoGomb, MehetGomb;
             TrackBar FolyamatJelzo;
             int Osszeg = 0;
@@ -87,21 +87,20 @@ namespace Projektmunka_24_I
             KezdoFelirat = new Label() {
                 Parent = panel1,
                 Location = new Point(55, 0),
-                Font = new Font("Playfair Display", 16f),
+                Font = new Font("Segoe UI", 16f, FontStyle.Bold),
                 Size = new Size(400, 100),
                 Text = "Állítsd be a lépésmaximumot",
                 TextAlign = ContentAlignment.TopCenter,
                 Padding = new Padding(0, 30, 0, 0),
             };
 
-            MaxSzam = new NumericUpDown() {
+            MaxSzam = new NumericUpDown_style() {
                 Parent = tabPage1,
                 Location = new Point(115, 225),
+                Font = new Font("Segoe UI", 13f, FontStyle.Bold),
                 Minimum = 2,
                 Maximum = 7,
-                Size = new Size(70, 100),
-                BackColor = Color.FromArgb(2, 143, 232)
-
+                Size = new Size(50, 50),
             };
 
             InditoGomb = new Button() {
@@ -109,9 +108,9 @@ namespace Projektmunka_24_I
                 Location = new Point(260, 213),
                 Size = new Size(130, 50),
                 Text = "Indítás",
-                Font = new Font("Playfair Display", 14f),
-                BackColor = Color.FromArgb(0, 30, 142),
-                ForeColor = Color.FromArgb(242, 242, 242),
+                Font = new Font("Segoe UI", 14f, FontStyle.Bold),
+                BackColor = Color.FromArgb(0, 154, 255),
+                FlatStyle = FlatStyle.Flat,
             };
             InditoGomb.Click += InditoGomb_Click;
 
@@ -124,13 +123,26 @@ namespace Projektmunka_24_I
                 InditoGomb.Visible = false;
                 panel1.Visible = false;
 
+                allas = new Label()
+                {
+                    Parent = tabPage1,
+                    Location = new Point(20, 30),
+                    Size = new Size(120, 30),
+                    Font = new Font("Segoe UI", 13f, FontStyle.Bold),
+                    Text = "Játék állása:",
+
+
+                };
 
                 HolTartunk = new Label() {
                     Parent = tabPage1,
                     Location = new Point(20, 70),
                     Size = new Size(450, 75),
-                    Text = "Játék állása:\n",
+                    Font = new Font("Segoe UI", 14f, FontStyle.Bold),
+                    Text = "",
                     BackColor = Color.FromArgb(127, 239, 232),
+                    ForeColor = Color.Black,
+                    BorderStyle = BorderStyle.FixedSingle,
                 };
                 FolyamatJelzo = new TrackBar() {
                     Parent = tabPage1,
@@ -144,11 +156,10 @@ namespace Projektmunka_24_I
 
                 };
 
-                JatekosLepese = new NumericUpDown() {
+                JatekosLepese = new NumericUpDown_style() {
                     Parent = tabPage1,
                     Location = new Point(115, 265),
                     Size = new Size(50, 50),
-                    BackColor = Color.FromArgb(2, 143, 232),
                     Minimum = 1,
                     Maximum = (int)MaxSzam.Value < 2 ? 2 : (int)MaxSzam.Value > 7 ? 7 : (int)MaxSzam.Value,
                 };
@@ -158,10 +169,9 @@ namespace Projektmunka_24_I
                     Location = new Point(260, 254),
                     Text = "Mehet!",
                     Font = new Font("Playfair Display", 14f),
-
                     Size = new Size(110, 45),
-                    BackColor = Color.FromArgb(0, 30, 142),
-                    ForeColor = Color.FromArgb(242, 242, 242),
+                    BackColor = Color.FromArgb(0, 154, 255),
+                    FlatStyle = FlatStyle.Flat,
                 };
 
                 MehetGomb.Click += MehetGomb_Click;
