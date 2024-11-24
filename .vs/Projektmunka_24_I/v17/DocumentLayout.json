@@ -1,0 +1,58 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\clone\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{087E76A6-F14F-4EC9-B7DA-798BBADD5EEE}|Projektmunka_24_I\\Projektmunka_24_I.csproj|c:\\clone\\projektmunka_24_i\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{087E76A6-F14F-4EC9-B7DA-798BBADD5EEE}|Projektmunka_24_I\\Projektmunka_24_I.csproj|solutionrelative:projektmunka_24_i\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{087E76A6-F14F-4EC9-B7DA-798BBADD5EEE}|Projektmunka_24_I\\Projektmunka_24_I.csproj|c:\\clone\\projektmunka_24_i\\numericupdown_style.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{087E76A6-F14F-4EC9-B7DA-798BBADD5EEE}|Projektmunka_24_I\\Projektmunka_24_I.csproj|solutionrelative:projektmunka_24_i\\numericupdown_style.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "NumericUpDown_style.cs",
+              "DocumentMoniker": "C:\\clone\\Projektmunka_24_I\\NumericUpDown_style.cs",
+              "RelativeDocumentMoniker": "Projektmunka_24_I\\NumericUpDown_style.cs",
+              "ToolTip": "C:\\clone\\Projektmunka_24_I\\NumericUpDown_style.cs",
+              "RelativeToolTip": "Projektmunka_24_I\\NumericUpDown_style.cs",
+              "ViewState": "AgIAACMAAAAAAAAAAAAwwBIAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-24T18:07:24.5Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Form1.cs",
+              "DocumentMoniker": "C:\\clone\\Projektmunka_24_I\\Form1.cs",
+              "RelativeDocumentMoniker": "Projektmunka_24_I\\Form1.cs",
+              "ToolTip": "C:\\clone\\Projektmunka_24_I\\Form1.cs",
+              "RelativeToolTip": "Projektmunka_24_I\\Form1.cs",
+              "ViewState": "AgIAAJUAAAAAAAAAAAAvwHgAAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-24T18:06:32.571Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
