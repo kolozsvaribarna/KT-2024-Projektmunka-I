@@ -52,6 +52,9 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="GombRounded.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="NumericUpDown_style.cs">
       <SubType>Component</SubType>
     </Compile>
