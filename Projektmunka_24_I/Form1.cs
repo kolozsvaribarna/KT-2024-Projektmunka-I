@@ -14,6 +14,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
+using System.IO.IsolatedStorage;
 
 namespace Projektmunka_24_I
 {
@@ -22,7 +23,7 @@ namespace Projektmunka_24_I
         TextBox usernameTextBox;
 
         #region fejben21_mezok
-        Stopwatch T = new Stopwatch();
+        Stopwatch fejben21T = new Stopwatch();
         Random R = new Random();
         NumericUpDown_style MaxSzam, JatekosLepese;
         TrackBar FolyamatJelzo;
@@ -40,6 +41,8 @@ namespace Projektmunka_24_I
         bool gameEnded = false;
         Label labelStatus = new Label();
         GombRounded resetButton = new GombRounded();
+        bool isPlayerFirstMove = true;
+        Stopwatch TicTacToeT = new Stopwatch();
         #endregion
 
         #region NimGame_mezok
@@ -48,7 +51,9 @@ namespace Projektmunka_24_I
         Button[] pileButtons, restartButton;
         int[] piles;
         bool isPlayerTurn = true;
+        bool Nim_isPlayerFirstMove = true;
         NumericUpDown[] pileNumerics;
+        Stopwatch NimgameT = new Stopwatch();
         #endregion
 
         public Form1()
@@ -56,7 +61,7 @@ namespace Projektmunka_24_I
             InitializeComponent();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        void Form1_Load(object sender, EventArgs e)
         {
             #region Form_alapbeallitasok
             FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -352,17 +357,65 @@ namespace Projektmunka_24_I
                     Maximum = 3,
                 };
             }
-         #endregion
-         }
-
-        public void saveToFile(string gameName, int score)
-        {
-            string lineData = $"{gameName};{getUsername()};{Convert.ToString(score)};{DateTime.Now.ToString("yyyy-MM-dd-HH-ss")};{Environment.NewLine}";
-            File.AppendAllText($"{gameName}.txt", lineData);
+            #endregion
         }
-        public string getUsername()
+
+        void saveToFile(string gameName, int score)
+        {
+            // meglevo pontszamok beolvasasa
+            List<string> osszSor = File.Exists($"{gameName}.txt") ? File.ReadAllLines($"{gameName}.txt").ToList() : new List<string>();
+
+            // a meghivott jatek pontszamanak mentese
+            osszSor.Add($"{getUsername()};{Convert.ToString(score)};{DateTime.Now.ToString("yyyy-MM-dd_HH:ss")}");
+            // sorok mezokre bontasa
+            var bontottSorok = osszSor.Select(sor =>
+            {
+                var mezok = sor.Split(';');
+                return new
+                {
+                    nev = mezok[0],
+                    pont = int.Parse(mezok[1]),
+                    datum = mezok[2]
+                };
+            });
+
+            // sorok rangsorolasa
+            var sorok = bontottSorok.OrderByDescending(x => x.pont)
+                                         .Select(x => $"{x.nev};{x.pont};{x.datum}")
+                                         .ToList();
+            // sorok vissairasa
+            File.WriteAllLines($"{gameName}.txt", sorok);
+        }
+        string getUsername()
         {
             return usernameTextBox.Text;
+        }
+        int getScore(Stopwatch T)
+        {
+            // jatek kezdese ota eltelt ido, masopercekre konvertalva
+            T.Stop();
+            int time = Convert.ToInt32(T.ElapsedMilliseconds / 1000);
+            if (time <= 3)
+            {
+                return 100;
+            }
+            else if (time <= 6)
+            {
+                return 80;
+            }
+            else if (time <= 9)
+            {
+                return 60;
+            }
+            else if (time <= 12)
+            {
+                return 40;
+            }
+            else if (time <= 20)
+            {
+                return 20;
+            }
+            return 10;
         }
 
         #region fejben21_fuggvenyek
@@ -373,7 +426,7 @@ namespace Projektmunka_24_I
         }
         void ResetGame()
         {
-            T.Stop();
+            fejben21T.Stop();
             KezdoFelirat.Visible = true;
             MaxSzam.Visible = true;
             InditoGomb.Visible = true;
@@ -386,10 +439,11 @@ namespace Projektmunka_24_I
             FolyamatJelzo.Value = 0;
             JatekosLepese.Visible = false;
             MehetGomb.Visible = false;
+            VisszaGomb.Visible = false;
         }
         void InditoGomb_Click(object sender, EventArgs e)
         {
-            T.Restart();
+            fejben21T.Restart();
             KezdoFelirat.Visible = false;
             MaxSzam.Visible = false;
             InditoGomb.Visible = false;
@@ -436,7 +490,7 @@ namespace Projektmunka_24_I
                 if (AktualisLepes + Osszeg > 21)
                 {
                     MessageBox.Show("Besokalltál! Túllépted a 21-et! (" + (AktualisLepes + Osszeg + ")"));
-                    ResetGame();
+                    JatekosKovetkezik();
                 }
                 else
                 {
@@ -465,14 +519,13 @@ namespace Projektmunka_24_I
                 if (Osszeg == 21)
                 {
                     MessageBox.Show("Vesztettél!");
-                    saveScore();
                     ResetGame();
                 }
             }
             else
             {
-                MessageBox.Show("Győztél!");
-                saveScore();
+                int pont = getScore(fejben21T);
+                MessageBox.Show($"Győztél! Pontszám: {pont}");
                 ResetGame();
             }
         }
@@ -481,44 +534,16 @@ namespace Projektmunka_24_I
             if (Osszeg < 21) return false;
             return true;
         }
-        void saveScore()
-        {
-            int score;
-            // jatek kezdese ota eltelt ido, masopercekre konvertalva
-            int time = Convert.ToInt32(T.ElapsedMilliseconds / 1000);
-            if (time <= 3)
-            {
-                score = 100;
-            }
-            else if (time <= 6)
-            {
-                score = 80;
-            }
-            else if (time <= 9)
-            {
-                score = 60;
-            }
-            else if (time <= 12)
-            {
-                score = 40;
-            }
-            else if (time <= 20)
-            {
-                score = 20;
-            }
-            score = 10;
-
-        }
         #endregion
 
         #region tic-tac-toe_fuggvenyek
         void ResetGame(object sender, EventArgs e)
         {
-            currentPlayer = 'X';
+            currentPlayer = 'X'; // játékos
             gameEnded = false;
             labelStatus.Text = "Új játék! Játékos kezd";
+            isPlayerFirstMove = true;
 
-            // Inicializáljuk a táblát és a gombok szövegét
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
@@ -543,26 +568,26 @@ namespace Projektmunka_24_I
                 board[row, col] = currentPlayer;
                 button.Text = currentPlayer.ToString();
                 labelStatus.Text = "";
+                if (isPlayerFirstMove) TicTacToeT.Restart();
+                isPlayerFirstMove = false;
 
                 if (CheckWin(currentPlayer))
                 {
                     labelStatus.Text = $"{currentPlayer} nyert!";
                     gameEnded = true;
+                    TicTacToeT.Stop();
+                    if (currentPlayer == 'X') saveToFile("TicTacToe",getScore(TicTacToeT));
                     return;
                 }
                 else if (IsBoardFull())
                 {
                     labelStatus.Text = "Döntetlen!";
                     gameEnded = true;
+                    TicTacToeT.Stop();
                     return;
                 }
-
                 currentPlayer = currentPlayer == 'X' ? 'O' : 'X';
-
-                if (currentPlayer == 'O')
-                {
-                    ComputerMove();
-                }
+                if (currentPlayer == 'O') ComputerMove();
             }
         }
         bool CheckWin(char player)
@@ -579,8 +604,7 @@ namespace Projektmunka_24_I
         }
         bool IsBoardFull()
         {
-            foreach (char c in board)
-                if (c == '\0') return false;
+            foreach (char c in board) if (c == '\0') return false;
             return true;
         }
         void ComputerMove()
@@ -616,8 +640,14 @@ namespace Projektmunka_24_I
         #region NimGame_fuggvenyek
         void RemoveStones(object sender, EventArgs e)
         {
-            if (!isPlayerTurn || IsGameOver())
-                return;
+            if (!isPlayerTurn || IsGameOver()) return;
+
+            if (Nim_isPlayerFirstMove)
+            {
+                NimgameT.Restart();
+                Nim_isPlayerFirstMove = false;
+            }
+
 
             Button button = (Button)sender;
             int pileIndex = (int)button.Tag;
@@ -632,7 +662,9 @@ namespace Projektmunka_24_I
 
                 if (IsGameOver())
                 {
-                    MessageBox.Show("Nyertél!" + Environment.NewLine + "Új kör!");
+                    int pont = getScore(NimgameT);
+                    MessageBox.Show($"Nyertél! Pontszán: {pont}{Environment.NewLine}Új kör!");
+                    saveToFile("NimGame", pont);
                     RestartGame();
                     return;
                 }
@@ -708,6 +740,8 @@ namespace Projektmunka_24_I
         }
         void RestartGame()
         {
+            NimgameT.Stop();
+            Nim_isPlayerFirstMove = true;
             for (int i = 0; i < piles.Length; i++)
             {
                 pileNumerics[i].Maximum = 3;
@@ -733,5 +767,5 @@ namespace Projektmunka_24_I
         }
     
     #endregion
-}
+    }
 }
