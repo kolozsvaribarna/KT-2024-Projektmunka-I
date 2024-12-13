@@ -56,6 +56,12 @@ namespace Projektmunka_24_I
         Stopwatch NimgameT = new Stopwatch();
         #endregion
 
+        #region eredmenyoldal_mezok
+        Label jatekvalasztoLabel;
+        ComboBox jatekvalaszto;
+        ListBox eredmenyListbox;
+        #endregion
+
         public Form1()
         {
             InitializeComponent();
@@ -102,11 +108,16 @@ namespace Projektmunka_24_I
             {
                 Text = "Nim játék",
             };
+            TabPage tabPage5 = new TabPage()
+            {
+                Text = "Rangsor",
+            };
 
             tc.TabPages.Add(tabPage1); //namePage
             tc.TabPages.Add(tabPage2); //fejben21
             tc.TabPages.Add(tabPage3); //tic-tac-toe
             tc.TabPages.Add(tabPage4); //nim
+            tc.TabPages.Add(tabPage5); // rangsorolas
 
             Controls.Add(tc);
             #endregion
@@ -358,15 +369,45 @@ namespace Projektmunka_24_I
                 };
             }
             #endregion
-        }
 
+            #region Rangsorolas
+            jatekvalasztoLabel = new Label()
+            {
+                Parent = tabPage5,
+                Size = new Size(90, 16),
+                Location = new Point(30, 10),
+                Text = "Kiválaszott játék:",
+                TextAlign = ContentAlignment.MiddleCenter,
+            };
+            jatekvalaszto = new ComboBox()
+            {
+                Parent = tabPage5,
+                Size = new Size(200, 50),
+                Location = new Point(120, 10),
+                DropDownStyle = ComboBoxStyle.DropDownList,
+            };
+            string[] jatekok = { "Fejben 21", "Tic-Tac-Toe", "Nim játék" };
+            jatekvalaszto.Items.AddRange(jatekok);
+
+            jatekvalaszto.SelectedIndexChanged += Jatekvalaszto_update;
+
+            eredmenyListbox = new ListBox()
+            {
+                Parent = tabPage5,
+                Size = new Size(300, 340),
+                Location = new Point(100, 100),
+                SelectionMode = SelectionMode.None,
+                Font = new Font("Consolas", 10), // barmilyen monospace font -> oszlopok szelessege
+            };
+            #endregion
+        }
         void saveToFile(string gameName, int score)
         {
             // meglevo pontszamok beolvasasa
             List<string> osszSor = File.Exists($"{gameName}.txt") ? File.ReadAllLines($"{gameName}.txt").ToList() : new List<string>();
 
             // a meghivott jatek pontszamanak mentese
-            osszSor.Add($"{getUsername()};{Convert.ToString(score)};{DateTime.Now.ToString("yyyy-MM-dd_HH:ss")}");
+            osszSor.Add($"{usernameTextBox.Text};{Convert.ToString(score)};{DateTime.Now.ToString("yyyy-MM-dd_HH:ss")}");
             // sorok mezokre bontasa
             var bontottSorok = osszSor.Select(sor =>
             {
@@ -385,10 +426,6 @@ namespace Projektmunka_24_I
                                          .ToList();
             // sorok vissairasa
             File.WriteAllLines($"{gameName}.txt", sorok);
-        }
-        string getUsername()
-        {
-            return usernameTextBox.Text;
         }
         int getScore(Stopwatch T)
         {
@@ -417,6 +454,58 @@ namespace Projektmunka_24_I
             }
             return 10;
         }
+
+        #region rangsorolas_fuggvenyek
+        void Jatekvalaszto_update(object sender, EventArgs e)
+        {
+            // alapertelmezett ertek kivalasztva
+            if (jatekvalaszto.SelectedIndex < 0) return;
+
+            eredmenyListbox.Items.Clear();
+            var data = GetTop20Scores(jatekvalaszto.Text);
+
+            // ures eredmenyek kezelese
+            if (!data.Any())
+            {
+                eredmenyListbox.Items.Add("Még nincsenek eredmények..");
+                return;
+            }
+
+            // fejlec es valasztovonal hozzaadasa a tablazathoz
+            eredmenyListbox.Items.Add(string.Format("{0,-4}{1,-13}{2,-5}{3,-16}", "","Név","Pont","Dátum" ));
+            eredmenyListbox.Items.Add(new string(' ', 3) + new string('-', 38));
+
+            // padding beallitasa -> oszlopok szelessegenek allitasa
+            var formattedData = data.Select(sor =>
+            {
+                var fields = sor.Split(';');
+            return string.Format(
+                    // rang, nev, pont, datum
+                    "{0,-4} {1,-13} {2,-5} {3,-16}",
+                    fields[0], fields[1], fields[2], fields[3]);
+            });
+            // formazott sorok megjelnitese
+            eredmenyListbox.Items.AddRange(formattedData.ToArray());
+        }
+
+        List<string> GetTop20Scores(string gameName)
+        {
+            List<string> gyujtottSorok = new List<string>();
+
+            if (File.Exists($"{gameName}.txt"))
+            {
+                List<string> osszSor = File.ReadAllLines($"{gameName}.txt").ToList();
+                int i = 0;
+                while (i < osszSor.Count)
+                {
+                    if (i == 20) break;
+                    var sor = osszSor[i].Insert(0, $"{i += 1}. ;");
+                    gyujtottSorok.Add(sor);
+                }
+            }
+            return gyujtottSorok;
+        }
+        #endregion
 
         #region fejben21_fuggvenyek
         void VisszaGomb_Click(object sender, EventArgs e)
@@ -526,6 +615,7 @@ namespace Projektmunka_24_I
             {
                 int pont = getScore(fejben21T);
                 MessageBox.Show($"Győztél! Pontszám: {pont}");
+                saveToFile("Fejben 21", pont);
                 ResetGame();
             }
         }
@@ -576,7 +666,7 @@ namespace Projektmunka_24_I
                     labelStatus.Text = $"{currentPlayer} nyert!";
                     gameEnded = true;
                     TicTacToeT.Stop();
-                    if (currentPlayer == 'X') saveToFile("TicTacToe",getScore(TicTacToeT));
+                    if (currentPlayer == 'X') saveToFile("Tic-Tac-Toe", getScore(TicTacToeT));
                     return;
                 }
                 else if (IsBoardFull())
@@ -664,7 +754,7 @@ namespace Projektmunka_24_I
                 {
                     int pont = getScore(NimgameT);
                     MessageBox.Show($"Nyertél! Pontszán: {pont}{Environment.NewLine}Új kör!");
-                    saveToFile("NimGame", pont);
+                    saveToFile("Nim játék", pont);
                     RestartGame();
                     return;
                 }
