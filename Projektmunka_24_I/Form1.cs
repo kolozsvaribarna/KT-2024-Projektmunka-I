@@ -7,20 +7,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using System.IO;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using System.Security;
-using System.Security.Cryptography.X509Certificates;
 using System.IO.IsolatedStorage;
 
 namespace Projektmunka_24_I
 {
     public partial class Form1 : Form
     {
+        TabPage tabPage1, tabPage2, tabPage3, tabPage4, tabPage5;
+        TabControl tc;
         TextBox usernameTextBox;
+        Label nameLabel;
 
         #region fejben21_mezok
         Stopwatch fejben21T = new Stopwatch();
@@ -48,7 +48,8 @@ namespace Projektmunka_24_I
         #region NimGame_mezok
         Label[] pileLabels;
         Label NimStatusLabel;
-        Button[] pileButtons, restartButton;
+        Button[] pileButtons;
+        Button NimResetButton;
         int[] piles;
         bool isPlayerTurn = true;
         bool Nim_isPlayerFirstMove = true;
@@ -78,7 +79,7 @@ namespace Projektmunka_24_I
             #endregion
 
             #region tabcontroll_setup
-            TabControl tc = new TabControl
+            tc = new TabControl
             {
                 Location = new Point(0, 0),
                 Size = new Size(ClientSize.Width, ClientSize.Height),
@@ -86,58 +87,69 @@ namespace Projektmunka_24_I
                 Dock = DockStyle.Fill,
                 Padding = new Point(0, 0),
             };
+            tc.SelectedIndexChanged += Tc_SelectedIndexChanged;
 
-            TabPage tabPage1 = new TabPage()
+            tabPage1 = new TabPage()
             {
-                Text = "Játékosnév",
-                BackColor = Color.Wheat,
+                Text = "Név",
             };
 
-            TabPage tabPage2 = new TabPage()
+            tabPage2 = new TabPage()
             {
                 Text = "Fejben 21",
                 BackColor = Color.FromArgb(86, 129, 163),
             };
-            TabPage tabPage3 = new TabPage()
+            tabPage3 = new TabPage()
             {
                 Text = "Tic-Tac-Toe",
                 BackColor = Color.FromArgb(144, 238, 144),
 
             };
-            TabPage tabPage4 = new TabPage()
+            tabPage4 = new TabPage()
             {
                 Text = "Nim játék",
             };
-            TabPage tabPage5 = new TabPage()
+            tabPage5 = new TabPage()
             {
                 Text = "Rangsor",
             };
-
-            tc.TabPages.Add(tabPage1); //namePage
-            tc.TabPages.Add(tabPage2); //fejben21
-            tc.TabPages.Add(tabPage3); //tic-tac-toe
-            tc.TabPages.Add(tabPage4); //nim
-            tc.TabPages.Add(tabPage5); // rangsorolas
-
+            TabPage[] pages = {tabPage1, tabPage2, tabPage3, tabPage4, tabPage5 };
+            tc.TabPages.AddRange(pages);
             Controls.Add(tc);
             #endregion
 
             #region usernamePage
-            Label nameLabel = new Label()
+            nameLabel = new Label()
             {
                 Parent = tabPage1,
                 Text = "Játékosnév:",
-                Size = new Size(100, 30),
-                Location = new Point(10, 10),
+                Size = new Size(100, 50),
+                Location = new Point(100, 110),
+                Font = new Font("Consolas", 10),
+                ForeColor = Color.Green,
+                TextAlign = ContentAlignment.MiddleCenter,
             };
 
             usernameTextBox = new TextBox()
             {
                 Parent = tabPage1,
-                Size = new Size(100, 30),
-                Location = new Point(10, 50),
-                Text = "Játékos",
+                Size = new Size(100, 35),
+                Location = new Point(200, 126),
+                Text = $"Játékos{R.Next(1, 2000)}",
+                MaxLength = 15,
             };
+            usernameTextBox.TextChanged += UsernameTextBox_TextChanged;
+
+            Button torlesGomb = new Button()
+            {
+                Parent = tabPage1,
+                Text = "X",
+                Size = new Size(20, 20),
+                Location = new Point(305, 126),
+                ForeColor = Color.Red,
+                TextAlign = ContentAlignment.MiddleCenter,
+            };
+            torlesGomb.Click += TorlesGomb_Click;
             #endregion
 
             #region fejben21
@@ -271,7 +283,7 @@ namespace Projektmunka_24_I
             #endregion
 
             #region tic-tac-toe
-            int buttonSize = 200 / 3;
+            int buttonSize = 275 / 3;
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
@@ -280,11 +292,12 @@ namespace Projektmunka_24_I
                     {
                         Parent = tabPage3,
                         Size = new Size(buttonSize + 15, buttonSize + 15),
-                        Location = new Point(j * (buttonSize + 15) + 70, i * (buttonSize + 15) + 15),
+                        Location = new Point(j * (buttonSize + 15) + 88, i * (buttonSize + 15) + 15),
                         Font = new Font("Arial", 16, FontStyle.Bold),
                         Tag = new Point(i, j), // A gomb pozíciója a mátrixban
                         BackColor = Color.FromArgb(44, 95, 45),
                         ForeColor = Color.White,
+                        FlatStyle = FlatStyle.Flat,
                     };
                     buttons[i, j].Click += ButtonClick;
                 }
@@ -292,7 +305,7 @@ namespace Projektmunka_24_I
             Label labelStatus = new Label
             {
                 Parent = tabPage3,
-                Location = new Point(0, 250),
+                Location = new Point(50, 350),
                 Size = new Size(250, 50),
                 Font = new Font("Arial", 10, FontStyle.Bold),
                 TextAlign = ContentAlignment.MiddleCenter,
@@ -305,13 +318,12 @@ namespace Projektmunka_24_I
             GombRounded resetButton = new GombRounded
             {
                 Parent = tabPage3,
-                Location = new Point(260, 370),
+                Location = new Point(350, 350),
                 Size = new Size(75, 50),
                 Font = new Font("Arial", 14),
                 TextAlign = ContentAlignment.MiddleCenter,
                 Text = "Reset",
                 BackColor = Color.FromArgb(151, 188, 98),
-                //FlatStyle = FlatStyle.Flat,
                 BorderSize = 3,
                 BorderRadius = 20,
                 BorderColor = Color.FromArgb(126, 140, 84),
@@ -333,9 +345,18 @@ namespace Projektmunka_24_I
                 Size = new Size(250, 50),
                 Font = new Font("Arial", 10, FontStyle.Bold),
                 TextAlign = ContentAlignment.MiddleCenter,
-                Text = ":-)",
                 ForeColor = Color.FromArgb(0, 0, 0),
             };
+
+            NimResetButton = new Button()
+            {
+                Parent= tabPage4,
+                Location = new Point(340, 260),
+                Size = new Size(55, 30),
+                Text = "Kilépés",
+                Visible = false,
+            };
+            NimResetButton.Click += nimResetGame;
 
             for (int i = 0; i < piles.Length; i++)
             {
@@ -343,8 +364,9 @@ namespace Projektmunka_24_I
                 {
                     Parent = tabPage4,
                     Text = $"{i + 1}. kupac: {piles[i]}",
-                    Location = new Point(50, 60 + i * 40),
-                    Size = new Size(200, 30)
+                    Location = new Point(50, 65 + i * 40),
+                    Size = new Size(200, 30),
+                    Font = new Font("Consolas", 10)
                 };
 
                 pileButtons[i] = new Button
@@ -361,7 +383,7 @@ namespace Projektmunka_24_I
                 {
                     Parent = tabPage4,
                     Text = $"{i}",
-                    Location = new Point(400, 60 + i * 42),
+                    Location = new Point(390, 63 + i * 42),
                     Size = new Size(50, 50),
                     Value = 1,
                     Minimum = 1,
@@ -374,17 +396,19 @@ namespace Projektmunka_24_I
             jatekvalasztoLabel = new Label()
             {
                 Parent = tabPage5,
-                Size = new Size(90, 16),
-                Location = new Point(30, 10),
+                Size = new Size(120, 16),
+                Location = new Point(40, 13),
                 Text = "Kiválaszott játék:",
                 TextAlign = ContentAlignment.MiddleCenter,
+                Font = new Font("Consolas", 8),
             };
             jatekvalaszto = new ComboBox()
             {
                 Parent = tabPage5,
                 Size = new Size(200, 50),
-                Location = new Point(120, 10),
+                Location = new Point(160, 10),
                 DropDownStyle = ComboBoxStyle.DropDownList,
+                Font = new Font("Consolas", 10),
             };
             string[] jatekok = { "Fejben 21", "Tic-Tac-Toe", "Nim játék" };
             jatekvalaszto.Items.AddRange(jatekok);
@@ -395,7 +419,7 @@ namespace Projektmunka_24_I
             {
                 Parent = tabPage5,
                 Size = new Size(300, 340),
-                Location = new Point(100, 100),
+                Location = new Point(80, 50),
                 SelectionMode = SelectionMode.None,
                 Font = new Font("Consolas", 10), // barmilyen monospace font -> oszlopok szelessege
             };
@@ -419,18 +443,17 @@ namespace Projektmunka_24_I
                     datum = mezok[2]
                 };
             });
-
-            // sorok rangsorolasa
+            // sorok rendezese pontszam alapjan -> mezok rendezese -> lista konv.
             var sorok = bontottSorok.OrderByDescending(x => x.pont)
-                                         .Select(x => $"{x.nev};{x.pont};{x.datum}")
-                                         .ToList();
+                    .Select(x => $"{x.nev};{x.pont};{x.datum}")
+                    .ToList();
             // sorok vissairasa
             File.WriteAllLines($"{gameName}.txt", sorok);
         }
         int getScore(Stopwatch T)
         {
-            // jatek kezdese ota eltelt ido, masopercekre konvertalva
             T.Stop();
+            // jatek kezdese ota eltelt ido, masopercekre konvertalva
             int time = Convert.ToInt32(T.ElapsedMilliseconds / 1000);
             if (time <= 3)
             {
@@ -454,6 +477,32 @@ namespace Projektmunka_24_I
             }
             return 10;
         }
+
+        #region felhasznalonev_fuggvenyek
+        void UsernameTextBox_TextChanged(object sender, EventArgs e)
+        {
+            if (String.IsNullOrEmpty(usernameTextBox.Text) || usernameTextBox.Text.Any(a => a == ';'))
+            {
+                nameLabel.ForeColor = Color.Red;
+                return;
+            }
+            nameLabel.ForeColor = Color.Green;
+        }
+
+        void Tc_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (usernameTextBox.Text.Any(a => a == ';')) tc.SelectedTab = tabPage1;
+            else if (!String.IsNullOrEmpty(usernameTextBox.Text)) return;
+
+            if (tc.SelectedTab != tabPage1) tc.SelectedTab = tabPage1;
+        }
+
+        void TorlesGomb_Click(object sender, EventArgs e)
+        {
+            usernameTextBox.Clear();
+            usernameTextBox.Focus();
+        }
+        #endregion
 
         #region rangsorolas_fuggvenyek
         void Jatekvalaszto_update(object sender, EventArgs e)
@@ -682,13 +731,14 @@ namespace Projektmunka_24_I
         }
         bool CheckWin(char player)
         {
+            // egyenesek
             for (int i = 0; i < 3; i++)
             {
                 if ((board[i, 0] == player && board[i, 1] == player && board[i, 2] == player) ||
                     (board[0, i] == player && board[1, i] == player && board[2, i] == player))
                     return true;
             }
-
+            // atlok
             return (board[0, 0] == player && board[1, 1] == player && board[2, 2] == player) ||
                    (board[0, 2] == player && board[1, 1] == player && board[2, 0] == player);
         }
@@ -699,6 +749,56 @@ namespace Projektmunka_24_I
         }
         void ComputerMove()
         {
+            // nyero lepes valasztasa (ha van)
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    if (board[i, j] == '\0')
+                    {
+                        board[i, j] = 'O';
+                        if (CheckWin('O'))
+                        {
+                            buttons[i, j].Text = "O";
+                            buttons[i, j].Enabled = false;
+                            labelStatus.Text = "O nyert!";
+                            gameEnded = true;
+                            return;
+                        }
+                        board[i, j] = '\0';
+                    }
+                }
+            }
+            // jatekos blokkolasa
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    if (board[i, j] == '\0')
+                    {
+                        board[i, j] = 'X';
+                        if (CheckWin('X'))
+                        {
+                            board[i, j] = 'O';
+                            buttons[i, j].Text = "O";
+                            buttons[i, j].Enabled = false;
+                            currentPlayer = 'X';
+                            return;
+                        }
+                        board[i, j] = '\0';
+                    }
+                }
+            }
+            // kozep elfoglalasa
+            if (board[1, 1] == '\0')
+            {
+                board[1, 1] = 'O';
+                buttons[1, 1].Text = "O";
+                buttons[1, 1].Enabled = false;
+                currentPlayer = 'X';
+                return;
+            }
+            // maradek mezok
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
@@ -708,17 +808,6 @@ namespace Projektmunka_24_I
                         board[i, j] = 'O';
                         buttons[i, j].Text = "O";
                         buttons[i, j].Enabled = false;
-
-                        if (CheckWin('O'))
-                        {
-                            labelStatus.Text = "O nyert!";
-                            gameEnded = true;
-                        }
-                        else if (IsBoardFull())
-                        {
-                            labelStatus.Text = "Döntetlen!";
-                            gameEnded = true;
-                        }
                         currentPlayer = 'X';
                         return;
                     }
@@ -753,7 +842,9 @@ namespace Projektmunka_24_I
                 if (IsGameOver())
                 {
                     int pont = getScore(NimgameT);
-                    MessageBox.Show($"Nyertél! Pontszán: {pont}{Environment.NewLine}Új kör!");
+                    NimStatusLabel.Text = $"Nyertél!";
+                    NimStatusLabel.BackColor = Color.Black;
+                    MessageBox.Show($"Elért pontszám: {pont}");
                     saveToFile("Nim játék", pont);
                     RestartGame();
                     return;
@@ -765,7 +856,7 @@ namespace Projektmunka_24_I
 
                 if (IsGameOver())
                 {
-                    MessageBox.Show("Vesztettél!" + Environment.NewLine + "Új kör!");
+                    MessageBox.Show("Vesztettél!");
                     RestartGame();
                     return;
                 }
@@ -773,13 +864,21 @@ namespace Projektmunka_24_I
                 {
                     NimStatusLabel.ForeColor = Color.Black;
                     NimStatusLabel.Text = "Te következel!";
+                    NimResetButton.Visible = true;
                 }
             }
             else
             {
                 NimStatusLabel.ForeColor = Color.Red;
                 NimStatusLabel.Text = "Érvénytelen lépés!";
+                NimResetButton.Visible = false;
             }
+        }
+
+        void nimResetGame(object sender, EventArgs e)
+        {
+            RestartGame();
+            NimStatusLabel.Text = "Játék megszakítva";
         }
 
         void NimComputerMove()
@@ -832,6 +931,7 @@ namespace Projektmunka_24_I
         {
             NimgameT.Stop();
             Nim_isPlayerFirstMove = true;
+            NimResetButton.Visible = false;
             for (int i = 0; i < piles.Length; i++)
             {
                 pileNumerics[i].Maximum = 3;
