@@ -48,13 +48,14 @@ namespace Projektmunka_24_I
         #region NimGame_mezok
         Label[] pileLabels;
         Label NimStatusLabel;
-        Button[] pileButtons;
+        GombRounded[] pileButtons;
         Button NimResetButton;
         int[] piles;
         bool isPlayerTurn = true;
         bool Nim_isPlayerFirstMove = true;
-        NumericUpDown[] pileNumerics;
+        NumericUpDown_style[] pileNumerics;
         Stopwatch NimgameT = new Stopwatch();
+        GombRounded restartButton = new GombRounded();
         #endregion
 
         #region eredmenyoldal_mezok
@@ -91,7 +92,8 @@ namespace Projektmunka_24_I
 
             tabPage1 = new TabPage()
             {
-                Text = "Név",
+                Text = "Játékosév",
+                BackColor = Color.FromArgb(123, 179, 255),
             };
 
             tabPage2 = new TabPage()
@@ -108,10 +110,12 @@ namespace Projektmunka_24_I
             tabPage4 = new TabPage()
             {
                 Text = "Nim játék",
+                BackColor = Color.FromArgb(190, 155, 123),
             };
             tabPage5 = new TabPage()
             {
                 Text = "Rangsor",
+                BackColor = Color.FromArgb(102, 178, 178),
             };
             TabPage[] pages = {tabPage1, tabPage2, tabPage3, tabPage4, tabPage5 };
             tc.TabPages.AddRange(pages);
@@ -122,21 +126,22 @@ namespace Projektmunka_24_I
             nameLabel = new Label()
             {
                 Parent = tabPage1,
-                Text = "Játékosnév:",
-                Size = new Size(100, 50),
-                Location = new Point(100, 110),
-                Font = new Font("Consolas", 10),
-                ForeColor = Color.Green,
-                TextAlign = ContentAlignment.MiddleCenter,
+                Font = new Font("Segoe UI", 16f, FontStyle.Bold),
+                Text = "Add meg a felhasználóneved: ",
+                Size = new Size(500, 30),
+                Location = new Point(10, 10),
             };
 
             usernameTextBox = new TextBox()
             {
                 Parent = tabPage1,
-                Size = new Size(100, 35),
-                Location = new Point(200, 126),
+                Size = new Size(150, 25),
+                Location = new Point(15, 65),
                 Text = $"Játékos{R.Next(1, 2000)}",
                 MaxLength = 15,
+                BorderStyle = BorderStyle.None,
+                Font = new Font("Arial", 14f),
+                AutoSize = false,
             };
             usernameTextBox.TextChanged += UsernameTextBox_TextChanged;
 
@@ -144,10 +149,12 @@ namespace Projektmunka_24_I
             {
                 Parent = tabPage1,
                 Text = "X",
-                Size = new Size(20, 20),
-                Location = new Point(305, 126),
+                Font = new Font("Arial", 12, FontStyle.Bold),
+                Size = new Size(30, 30),
+                Location = new Point(190, 63),
                 ForeColor = Color.Red,
                 TextAlign = ContentAlignment.MiddleCenter,
+                BackColor = Color.White,
             };
             torlesGomb.Click += TorlesGomb_Click;
             #endregion
@@ -192,9 +199,8 @@ namespace Projektmunka_24_I
                 Text = "Indítás",
                 Font = new Font("Segoe UI", 14f, FontStyle.Bold),
                 BackColor = Color.FromArgb(0, 154, 255),
-                //FlatStyle = FlatStyle.Flat,
                 BorderSize = 3,
-                BorderRadius = 20,
+                BorderRadius = 8,
                 BorderColor = Color.FromArgb(255, 255, 255),
                 TextColor = Color.White,
             };
@@ -203,7 +209,7 @@ namespace Projektmunka_24_I
             allas = new Label()
             {
                 Parent = tabPage2,
-                Location = new Point(20, 30),
+                Location = new Point(20, 60),
                 Size = new Size(120, 30),
                 Font = new Font("Segoe UI", 13f, FontStyle.Bold),
                 Text = "Játék állása:",
@@ -214,7 +220,7 @@ namespace Projektmunka_24_I
             HolTartunk = new Label()
             {
                 Parent = tabPage2,
-                Location = new Point(20, 70),
+                Location = new Point(20, 100),
                 Size = new Size(450, 75),
                 Font = new Font("Segoe UI", 14f, FontStyle.Bold),
                 Text = "",
@@ -226,7 +232,7 @@ namespace Projektmunka_24_I
             FolyamatJelzo = new TrackBar()
             {
                 Parent = tabPage2,
-                Location = new Point(20, 145),
+                Location = new Point(20, 175),
                 Size = new Size(450, 25),
                 Minimum = 0,
                 Maximum = 21,
@@ -239,7 +245,7 @@ namespace Projektmunka_24_I
             JatekosLepese = new NumericUpDown_style()
             {
                 Parent = tabPage2,
-                Location = new Point(115, 265),
+                Location = new Point(115, 295),
                 Size = new Size(50, 50),
                 Minimum = 1,
                 Maximum = 5,
@@ -250,15 +256,14 @@ namespace Projektmunka_24_I
             MehetGomb = new GombRounded()
             {
                 Parent = tabPage2,
-                Location = new Point(260, 254),
+                Location = new Point(260, 284),
                 Text = "Mehet!",
                 Font = new Font("Playfair Display", 14f),
                 Size = new Size(110, 45),
                 BackColor = Color.FromArgb(0, 154, 255),
-                //FlatStyle = FlatStyle.Flat,
                 Visible = false,
                 BorderSize = 3,
-                BorderRadius = 20,
+                BorderRadius = 13,
                 BorderColor = Color.FromArgb(255, 255, 255),
                 TextColor = Color.White,
             };
@@ -267,14 +272,14 @@ namespace Projektmunka_24_I
             VisszaGomb = new GombRounded()
             {
                 Parent = tabPage2,
-                Location = new Point(280, 330),
+                Location = new Point(418, 5),
                 Text = "Vissza",
                 Font = new Font("Playfair Display", 11f, FontStyle.Bold),
                 Size = new Size(70, 30),
                 BackColor = Color.FromArgb(255, 0, 10),
                 FlatStyle = FlatStyle.Flat,
                 Visible = false,
-                BorderSize = 3,
+                BorderSize = 2,
                 BorderRadius = 7,
                 BorderColor = Color.FromArgb(255, 255, 255),
                 TextColor = Color.White,
@@ -291,8 +296,8 @@ namespace Projektmunka_24_I
                     buttons[i, j] = new Button
                     {
                         Parent = tabPage3,
-                        Size = new Size(buttonSize + 15, buttonSize + 15),
-                        Location = new Point(j * (buttonSize + 15) + 88, i * (buttonSize + 15) + 15),
+                        Size = new Size(buttonSize + 20, buttonSize + 20),
+                        Location = new Point(j * (buttonSize + 20) + 88, i * (buttonSize + 20) + 15),
                         Font = new Font("Arial", 16, FontStyle.Bold),
                         Tag = new Point(i, j), // A gomb pozíciója a mátrixban
                         BackColor = Color.FromArgb(44, 95, 45),
@@ -305,12 +310,12 @@ namespace Projektmunka_24_I
             Label labelStatus = new Label
             {
                 Parent = tabPage3,
-                Location = new Point(50, 350),
+                Location = new Point(70, 380),
                 Size = new Size(250, 50),
-                Font = new Font("Arial", 10, FontStyle.Bold),
+                Font = new Font("Arial", 16f, FontStyle.Bold),
                 TextAlign = ContentAlignment.MiddleCenter,
                 Name = "labelStatus",
-                Text = "Játék kezdődött! Játékos kezd.",
+                Text = "Játék elkezdődött",
                 ForeColor = Color.FromArgb(0, 0, 0),
             };
             this.labelStatus = labelStatus;
@@ -318,14 +323,14 @@ namespace Projektmunka_24_I
             GombRounded resetButton = new GombRounded
             {
                 Parent = tabPage3,
-                Location = new Point(350, 350),
+                Location = new Point(350, 380),
                 Size = new Size(75, 50),
                 Font = new Font("Arial", 14),
                 TextAlign = ContentAlignment.MiddleCenter,
                 Text = "Reset",
                 BackColor = Color.FromArgb(151, 188, 98),
                 BorderSize = 3,
-                BorderRadius = 20,
+                BorderRadius = 13,
                 BorderColor = Color.FromArgb(126, 140, 84),
                 TextColor = Color.Black,
             };
@@ -335,28 +340,20 @@ namespace Projektmunka_24_I
             #region NimGame
             piles = new int[] { R.Next(3, 10), R.Next(3, 10), R.Next(3, 10) };
             pileLabels = new Label[3];
-            pileButtons = new Button[3];
-            pileNumerics = new NumericUpDown[3];
+            pileButtons = new GombRounded[3];
+            restartButton = new GombRounded();
+            pileNumerics = new NumericUpDown_style[3];
 
             NimStatusLabel = new Label()
             {
                 Parent = tabPage4,
-                Location = new Point(0, 250),
+                Location = new Point(20, 295),
                 Size = new Size(250, 50),
-                Font = new Font("Arial", 10, FontStyle.Bold),
+                Font = new Font("Segoe UI", 16f, FontStyle.Bold),
                 TextAlign = ContentAlignment.MiddleCenter,
-                ForeColor = Color.FromArgb(0, 0, 0),
+                Text = "Játék indítása!",
+                ForeColor = Color.FromArgb(60, 47, 47),
             };
-
-            NimResetButton = new Button()
-            {
-                Parent= tabPage4,
-                Location = new Point(340, 260),
-                Size = new Size(55, 30),
-                Text = "Kilépés",
-                Visible = false,
-            };
-            NimResetButton.Click += nimResetGame;
 
             for (int i = 0; i < piles.Length; i++)
             {
@@ -364,51 +361,72 @@ namespace Projektmunka_24_I
                 {
                     Parent = tabPage4,
                     Text = $"{i + 1}. kupac: {piles[i]}",
-                    Location = new Point(50, 65 + i * 40),
+                    Location = new Point(50, 90 + i * 50),
                     Size = new Size(200, 30),
-                    Font = new Font("Consolas", 10)
+                    Font = new Font("Segoe UI", 16f, FontStyle.Bold),
                 };
 
-                pileButtons[i] = new Button
+                pileButtons[i] = new GombRounded
                 {
                     Parent = tabPage4,
                     Text = "Elveszek",
-                    Location = new Point(250, 60 + i * 40),
-                    Size = new Size(100, 30),
-                    Tag = i
+                    Location = new Point(250, 90 + i * 50),
+                    BackColor = Color.FromArgb(60, 47, 47),
+                    BorderSize = 2,
+                    BorderRadius = 5,
+                    BorderColor = Color.FromArgb(0, 0, 0),
+                    TextColor = Color.White,
+                    Tag = i,
                 };
                 pileButtons[i].Click += RemoveStones;
 
-                pileNumerics[i] = new NumericUpDown
+                pileNumerics[i] = new NumericUpDown_style
                 {
                     Parent = tabPage4,
                     Text = $"{i}",
-                    Location = new Point(390, 63 + i * 42),
+                    Location = new Point(400, 90 + i * 52),
+                    BackColor = Color.FromArgb(255, 244, 230),
+                    ForeColor = Color.FromArgb(75, 56, 50),
                     Size = new Size(50, 50),
                     Value = 1,
                     Minimum = 1,
                     Maximum = 3,
                 };
             }
+            NimResetButton = new GombRounded
+            {
+                Parent = tabPage4,
+                Size = new Size(160, 40),
+                Location = new Point(280, 300),
+                Font = new Font("Segoe UI", 13f),
+                Text = "Kilépés",
+                BackColor = Color.FromArgb(200, 72, 35),
+                BorderSize = 2,
+                BorderRadius = 4,
+                BorderColor = Color.FromArgb(170, 53, 31),
+                Visible = false,
+            };
+            NimResetButton.Click += nimResetGame;
             #endregion
 
             #region Rangsorolas
             jatekvalasztoLabel = new Label()
             {
                 Parent = tabPage5,
-                Size = new Size(120, 16),
-                Location = new Point(40, 13),
-                Text = "Kiválaszott játék:",
+                Size = new Size(165, 50),
+                Location = new Point(40, 10),
+                Font = new Font("Segoe UI", 12f, FontStyle.Bold),
+                Text = "Kiválasztott játék:",
                 TextAlign = ContentAlignment.MiddleCenter,
-                Font = new Font("Consolas", 8),
             };
             jatekvalaszto = new ComboBox()
             {
                 Parent = tabPage5,
-                Size = new Size(200, 50),
-                Location = new Point(160, 10),
+                Size = new Size(200, 150),
+                Location = new Point(220, 30),
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                Font = new Font("Consolas", 10),
+                BackColor = Color.FromArgb(0, 102, 102),
+                ForeColor = Color.FromArgb(255, 255, 255),
             };
             string[] jatekok = { "Fejben 21", "Tic-Tac-Toe", "Nim játék" };
             jatekvalaszto.Items.AddRange(jatekok);
@@ -419,7 +437,9 @@ namespace Projektmunka_24_I
             {
                 Parent = tabPage5,
                 Size = new Size(300, 340),
-                Location = new Point(80, 50),
+                Location = new Point(100, 100),
+                BackColor = Color.FromArgb(0, 76, 76),
+                ForeColor = Color.FromArgb(178, 216, 216),
                 SelectionMode = SelectionMode.None,
                 Font = new Font("Consolas", 10), // barmilyen monospace font -> oszlopok szelessege
             };
@@ -828,7 +848,7 @@ namespace Projektmunka_24_I
             }
 
 
-            Button button = (Button)sender;
+            GombRounded button = (GombRounded)sender;
             int pileIndex = (int)button.Tag;
             int value = (int)pileNumerics[pileIndex].Value;
 
@@ -843,8 +863,7 @@ namespace Projektmunka_24_I
                 {
                     int pont = getScore(NimgameT);
                     NimStatusLabel.Text = $"Nyertél!";
-                    NimStatusLabel.BackColor = Color.Black;
-                    MessageBox.Show($"Elért pontszám: {pont}");
+                    MessageBox.Show($"Nyertél! Pontszán: {pont}{Environment.NewLine}");
                     saveToFile("Nim játék", pont);
                     RestartGame();
                     return;
@@ -871,7 +890,6 @@ namespace Projektmunka_24_I
             {
                 NimStatusLabel.ForeColor = Color.Red;
                 NimStatusLabel.Text = "Érvénytelen lépés!";
-                NimResetButton.Visible = false;
             }
         }
 
